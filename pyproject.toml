@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "yaiot-bot"
+version = "0.1.0"
+description = ""
+authors = ["fadyat <fadyat@icloud.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+aiogram = "^3.14.0"
+pydantic-settings = "^2.6.1"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.7.2"
+
+# https://github.com/fastapi/fastapi/blob/17a29149e4a40dd756f0eb02a9317229e6b3e718/pyproject.toml#L188
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # pyflakes
+    "I", # isort
+    "B", # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+    "W191", # indentation contains tabs
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
