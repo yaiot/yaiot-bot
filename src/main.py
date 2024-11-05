@@ -1,34 +1,32 @@
 import asyncio
-import logging
+import signal
 
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters.command import Command
-from pydantic_settings import BaseSettings
-
-
-class Settings(BaseSettings):
-    bot_token: str
-
-    class Config:
-        env_file = ".env"
-        env_nested_delimiter = "__"
-        case_sensitive = False
+from src.bot import bot, dp
+from src.server import server
+from src.yandex import yandex_client
 
 
-logging.basicConfig(level=logging.INFO)
-settings = Settings()
-
-bot = Bot(token=settings.bot_token)
-dp = Dispatcher()
+async def start_bot_polling():
+    await dp.start_polling(bot)
 
 
-@dp.message(Command("start"))
-async def cmd_start(message: types.Message):
-    await message.answer("Hello!")
+async def start_server():
+    await server.serve()
+
+
+async def shutdown(_):
+    await dp.stop_polling()
+    await server.shutdown()
+    await yandex_client.close()
 
 
 async def main():
-    await dp.start_polling(bot)
+    # kind-a graceful shutdown, but it's not working properly for some reason
+    loop = asyncio.get_running_loop()
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        loop.add_signal_handler(sig, lambda s=sig: asyncio.create_task(shutdown(s)))
+
+    await asyncio.gather(start_server(), start_bot_polling())
 
 
 if __name__ == "__main__":
