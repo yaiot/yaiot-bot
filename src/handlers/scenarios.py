@@ -1,57 +1,51 @@
-from aiogram import Router, F
+from typing import Optional
+
+from aiogram import Router
 from aiogram.filters import Command, CommandObject
 from aiogram.types import Message
 
-from src.bot import bot
-from src.handlers import auth
+from src.middlewaries.auth_middleware import YandexAuthMiddleware
+from src.models import User
 
 router = Router()
+router.message.middleware(YandexAuthMiddleware())
+
 
 @router.message(Command("scenario"))
 async def cmd_scenario(
-        message: Message,
-        command: CommandObject,
-        is_yandex_authorized: bool
+    message: Message,
+    command: CommandObject,
+    user: Optional[User],
 ):
     if command.args is None:
-        await message.answer(
-            "Error: enter link ID"
-        )
+        await message.answer("Error: enter link ID")
         return
 
     try:
         str_id = command.args.split(" ", maxsplit=0)
     except ValueError:
         await message.answer(
-            "Error: wrong command format\n"
-            "Correct format: /start <ID>"
+            "Error: wrong command format\n" "Correct format: /start <ID>"
         )
         return
 
-    if not is_yandex_authorized:
-        await message.answer(
-            "Error: not authorized in yandex\n"
-            f"Type '/{auth.__name__}' first"
-        )
+    if user is None:
+        await message.answer("You aren't registered at system. Please, type /auth")
 
-    link = f"https://t.me/{bot.id}?start={str_id}"
+    link = f"https://t.me/{message.bot.id}?start={str_id}"
 
     await message.answer(
-        "Your link:\n"
-        f"<a href='{link}'>{link}</a>", parse_mode="HTML"
+        "Your link:\n" f"<a href='{link}'>{link}</a>", parse_mode="HTML"
     )
 
 
 @router.message(Command("scenarios"))
 async def cmd_scenarios(
-        message: Message,
-        is_yandex_authorized: bool
+    message: Message,
+    user: Optional[User],
 ):
-    if not is_yandex_authorized:
-        await message.answer(
-            "Error: not authorized in yandex\n"
-            f"Type '/{auth.__name__}' first"
-        )
+    if user is None:
+        await message.answer("You aren't registered at system. Please, type /auth")
 
     await message.answer("Available scenarios:")
     # TODO: Вывести сценарии пользователя

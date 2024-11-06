@@ -1,13 +1,47 @@
+import typing
+from dataclasses import dataclass
+from typing import Generator
+
 import httpx
 from pydantic import BaseModel
 
 from src.config import settings
 
 
+class YandexException(Exception):
+    pass
+
+
+@dataclass
+class YandexOAuthException(YandexException):
+    error: str
+    error_description: str
+
+
+@dataclass
+class YandexIoTException(YandexException):
+    request_id: str
+    status: str
+    message: str
+
+
 class TokenData(BaseModel):
     access_token: str
     refresh_token: str
     expires_in: int
+
+
+class Device(BaseModel):
+    id: str
+    name: str
+    type: str
+    state: str
+
+
+class SmartHomeUserInfo(BaseModel):
+    status: str
+    request_id: str
+    devices: typing.List[Device]
 
 
 class YandexClient:
@@ -39,12 +73,36 @@ class YandexClient:
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
 
-        response.raise_for_status()
+        if response.status_code != 200:
+            raise YandexOAuthException(**response.json())
+
         return TokenData(**response.json())
+
+    async def get_smart_home_user_info(
+        self,
+        access_token: str,
+    ) -> SmartHomeUserInfo:
+        """
+        Get information about the user's devices in the smart home.
+        https://yandex.ru/dev/dialogs/smart-home/doc/ru/concepts/platform-user-info
+
+        :param access_token: personal access token of the user.
+        :return: information about the user's devices in the smart home.
+        """
+
+        response = await self.c.get(
+            "https://api.iot.yandex.net/v1.0/user/info",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        if response.status_code != 200:
+            raise YandexIoTException(**response.json())
+
+        return SmartHomeUserInfo(**response.json())
 
 
 yandex_client = YandexClient(settings.yandex_client_id, settings.yandex_client_secret)
 
 
-async def get_yandex_client() -> YandexClient:
+def get_yandex_client() -> Generator[YandexClient, None, None]:
     yield yandex_client

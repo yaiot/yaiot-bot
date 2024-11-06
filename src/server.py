@@ -10,7 +10,7 @@ from sqlmodel import SQLModel, text
 from src.config import settings
 from src.db import get_db_session, session_manager
 from src.models import User
-from src.yandex import YandexClient, get_yandex_client
+from src.yandex import YandexClient, YandexOAuthException, get_yandex_client
 
 
 @asynccontextmanager
@@ -57,7 +57,11 @@ async def yandex_auth(
     :return:
     """
 
-    td = await client.exchange_code_for_data(code)
+    try:
+        td = await client.exchange_code_for_data(code)
+    except YandexOAuthException as e:
+        return f"Authorization failed: {e.error_description}"
+
     user = User(
         telegram_id=state,
         access_token=td.access_token,
@@ -79,4 +83,4 @@ async def yandex_auth(
         user.dict(),
     )
     await session.commit()
-    return "Authorization successful, page can be closed."
+    return "Authorization successful: you can close the page."

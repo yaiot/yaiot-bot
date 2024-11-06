@@ -1,12 +1,13 @@
 import asyncio
 import signal
 
-from src.bot import bot, dp
+from src.bot import bot, dp, setup_bot_commands
 from src.server import server
 from src.yandex import yandex_client
 
 
 async def start_bot_polling():
+    await setup_bot_commands(bot)
     await dp.start_polling(bot)
 
 

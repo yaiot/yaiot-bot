@@ -1,9 +1,11 @@
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
+
 from src.config import settings
 
 router = Router()
+
 
 @router.message(Command("auth"))
 async def cmd_auth(message: Message):
@@ -15,5 +17,6 @@ async def cmd_auth(message: Message):
     )
 
     await message.answer(
-        f"<a href='{url}'>Click here to authorize</a>", parse_mode="HTML"
+        f"Please, go to <a href='{url}'>Yandex</a> and approve the access",
+        parse_mode="HTML",
     )
