@@ -38,10 +38,17 @@ class Device(BaseModel):
     state: str
 
 
+class Scenario(BaseModel):
+    id: str
+    name: str
+    is_active: bool
+
+
 class SmartHomeUserInfo(BaseModel):
     status: str
     request_id: str
     devices: typing.List[Device]
+    scenarios: typing.List[Scenario]
 
 
 class YandexClient:
@@ -99,6 +106,29 @@ class YandexClient:
             raise YandexIoTException(**response.json())
 
         return SmartHomeUserInfo(**response.json())
+
+    async def run_scenario(
+        self,
+        scenario_id: str,
+        access_token: str,
+    ):
+        """
+        Run user's scenario in the smart home by ID
+        https://yandex.ru/dev/dialogs/smart-home/doc/ru/concepts/platform-scenario
+
+        :param scenario_id: scenario ID
+        :param access_token: personal access token of the user.
+        """
+
+        response = await self.c.post(
+            f"https://api.iot.yandex.net/v1.0/scenarios/{scenario_id}/actions",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        if response.status_code != 200:
+            raise YandexIoTException(**response.json())
+
+        return
 
 
 yandex_client = YandexClient(settings.yandex_client_id, settings.yandex_client_secret)
