@@ -18,7 +18,6 @@ class YandexAuthMiddleware(BaseMiddleware):
 
         user = data["event_from_user"]
         result = await session.execute(select(User).filter_by(telegram_id=user.id))
-        await session.commit()
 
         data["is_yandex_authorized"] = result is not None
 
