@@ -31,12 +31,6 @@ class TokenData(BaseModel):
     expires_in: int
 
 
-class Device(BaseModel):
-    id: str
-    name: str
-    type: str
-
-
 class Scenario(BaseModel):
     id: str
     name: str
@@ -46,7 +40,6 @@ class Scenario(BaseModel):
 class SmartHomeUserInfo(BaseModel):
     status: str
     request_id: str
-    devices: typing.List[Device]
     scenarios: typing.List[Scenario]
 
 

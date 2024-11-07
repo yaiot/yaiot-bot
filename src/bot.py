@@ -3,12 +3,12 @@ from aiogram.filters import CommandObject, CommandStart
 from aiogram.types import BotCommand, Message
 
 from src.config import settings
-from src.handlers import auth, links, scenarios, smart_home
+from src.handlers import auth, links, scenarios
 from src.yandex import YandexIoTException, get_yandex_client
 
 dp = Dispatcher()
 bot = Bot(token=settings.bot_token)
-dp.include_routers(auth.router, scenarios.router, smart_home.router, links.router)
+dp.include_routers(auth.router, scenarios.router, links.router)
 
 
 async def setup_bot_commands(bot: Bot):
@@ -21,9 +21,6 @@ async def setup_bot_commands(bot: Bot):
         [
             BotCommand(command="/start", description="Run scenario of your home by ID"),
             BotCommand(command="/auth", description="Authorize in Yandex"),
-            BotCommand(
-                command="/home_info", description="Get information about your home"
-            ),
             BotCommand(
                 command="/all_scenarios", description="Get all scenarios of your home"
             ),
