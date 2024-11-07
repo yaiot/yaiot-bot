@@ -19,23 +19,24 @@ async def cmd_scenario(
     user: Optional[User],
 ):
     if command.args is None:
-        await message.answer("Error: enter link ID")
+        await message.answer("Please provide scenario ID.\n" "Example: /scenario 12345")
         return
 
-    try:
-        str_id = command.args.split(" ", maxsplit=0)
-    except ValueError:
-        await message.answer(
-            "Error: wrong command format\n" "Correct format: /start <ID>"
-        )
+    args = command.args.split(" ")
+
+    if len(args) > 1:
+        await message.answer("Wrong command format\n" "Correct format: /scenario <id>")
         return
+
+    id = args[0]
 
     if user is None:
         await message.answer("You aren't registered at system. Please, type /auth")
+        return
 
-    link = f"https://t.me/{message.bot.id}?start={str_id}"
+    link = f"https://t.me/yaiot-bot?start={id}"
 
-    # TODO: Сохранить ссылку или str_id в базу
+    # TODO: Сохранить ссылку или id в базу
 
     await message.answer(
         "Your link:\n" f"<a href='{link}'>{link}</a>", parse_mode="HTML"
@@ -57,6 +58,10 @@ async def cmd_all_scenarios(
             )
         except YandexIoTException as e:
             await message.answer(f"Error: {e.message}")
+            return
+
+        if len(smart_home_info.scenarios) == 0:
+            await message.answer("You have no available scenarios in your smart home")
             return
 
         response = "Available scenarios:\n\n"

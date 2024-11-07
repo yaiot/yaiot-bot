@@ -3,12 +3,12 @@ from aiogram.filters import CommandObject, CommandStart
 from aiogram.types import BotCommand, Message
 
 from src.config import settings
-from src.handlers import auth, scenarios, smart_home
+from src.handlers import auth, links, scenarios, smart_home
 from src.yandex import YandexIoTException, get_yandex_client
 
 dp = Dispatcher()
 bot = Bot(token=settings.bot_token)
-dp.include_routers(auth.router, scenarios.router, smart_home.router)
+dp.include_routers(auth.router, scenarios.router, smart_home.router, links.router)
 
 
 async def setup_bot_commands(bot: Bot):
@@ -31,6 +31,8 @@ async def setup_bot_commands(bot: Bot):
                 command="/scenario",
                 description="Generate link to run scenario of your home",
             ),
+            BotCommand(command="/links", description="Get all user's links to share"),
+            BotCommand(command="/revoke_link", description="Revoke link by ID"),
         ]
     )
 

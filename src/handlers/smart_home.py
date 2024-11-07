@@ -32,4 +32,28 @@ async def cmd_home_info(message: Message, user: Optional[User]):
             await message.answer(f"Error: {e.message}")
             return
 
-        await message.answer(f"Home info: {smart_home_info}")
+        response = (
+            "Home info:\n\n"
+            f"request_id: {smart_home_info.request_id}\n"
+            f"status: {smart_home_info.status}\n"
+            "devices:\n"
+        )
+
+        for device in smart_home_info.devices:
+            response += (
+                f"id: {device['id']}\n"
+                f"name: {device['name']}\n"
+                f"type: {device['type']}\n"
+                f"state: {device['state']}\n\n"
+            )
+
+        response += "scenarios:\n"
+
+        for scenario in smart_home_info.scenarios:
+            response += (
+                f"id: {scenario['id']}\n"
+                f"name: {scenario['name']}\n"
+                f"is_active: {scenario['is_active']}\n\n"
+            )
+
+        await message.answer(response)
