@@ -8,4 +8,4 @@
   HOST=0.0.0.0
   PORT=80
   ```
-2. Выполнить `make start`
+2. Выполнить `make run`
