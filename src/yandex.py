@@ -35,7 +35,6 @@ class Device(BaseModel):
     id: str
     name: str
     type: str
-    state: str
 
 
 class Scenario(BaseModel):

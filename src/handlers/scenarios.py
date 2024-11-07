@@ -68,9 +68,9 @@ async def cmd_all_scenarios(
 
         for scenario in smart_home_info.scenarios:
             response += (
-                f"id: {scenario['id']}\n"
-                f"name: {scenario['name']}\n"
-                f"is_active: {scenario['is_active']}\n\n"
+                f"id: {scenario.id}\n"
+                f"name: {scenario.name}\n"
+                f"is_active: {scenario.is_active}\n\n"
             )
 
         await message.answer(response)
