@@ -34,7 +34,7 @@ async def cmd_scenario(
         await message.answer("You aren't registered at system. Please, type /auth")
         return
 
-    link = f"https://t.me/yaiot-bot?start={id}"
+    link = f"https://t.me/yayaiot_bot?start={id}"
 
     # TODO: Сохранить ссылку или id в базу
 

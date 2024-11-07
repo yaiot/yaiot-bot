@@ -43,7 +43,7 @@ async def cmd_start_scenario(message: Message, command: CommandObject):
     # TODO: Достать токен из базы
 
     access_token = "fdkjlfdjdl"  # Заглушка
-    scenario_id = command.args[0]
+    scenario_id = command.args
 
     for yandex_client in get_yandex_client():
         await message.answer(f"Running scenario {scenario_id}...")
