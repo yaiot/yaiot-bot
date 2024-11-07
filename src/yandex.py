@@ -1,5 +1,6 @@
 import typing
 from dataclasses import dataclass
+from enum import Enum
 from typing import Generator
 
 import httpx
@@ -37,10 +38,27 @@ class Scenario(BaseModel):
     is_active: bool
 
 
+class Device(BaseModel):
+    id: str
+    name: str
+
+
+class DeviceState(Enum):
+    ONLINE = "online"
+    OFFLINE = "offline"
+
+
+class DeviceWithState(BaseModel):
+    id: str
+    name: str
+    state: DeviceState
+
+
 class SmartHomeUserInfo(BaseModel):
     status: str
     request_id: str
     scenarios: typing.List[Scenario]
+    devices: typing.List[Device]
 
 
 class YandexClient:
@@ -121,6 +139,26 @@ class YandexClient:
             raise YandexIoTException(**response.json())
 
         return
+
+    async def get_device_state_info(
+        self,
+        device_id: str,
+    ):
+        """
+        Get information about the user's device in the smart home by ID
+        https://yandex.ru/dev/dialogs/smart-home/doc/ru/concepts/platform-device-state
+
+        :param device_id: device ID
+        """
+
+        response = await self.c.get(
+            f"https://api.iot.yandex.net/v1.0/devices/{device_id}",
+        )
+
+        if response.status_code != 200:
+            raise YandexIoTException(**response.json())
+
+        return DeviceWithState(**response.json())
 
 
 yandex_client = YandexClient(settings.yandex_client_id, settings.yandex_client_secret)

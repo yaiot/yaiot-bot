@@ -3,12 +3,12 @@ from aiogram.filters import CommandObject, CommandStart
 from aiogram.types import BotCommand, Message
 
 from src.config import settings
-from src.handlers import auth, links, scenarios
+from src.handlers import alerts, auth, links, scenarios
 from src.yandex import YandexIoTException, get_yandex_client
 
 dp = Dispatcher()
 bot = Bot(token=settings.bot_token)
-dp.include_routers(auth.router, scenarios.router, links.router)
+dp.include_routers(auth.router, scenarios.router, links.router, alerts.router)
 
 
 async def setup_bot_commands(bot: Bot):
@@ -30,6 +30,10 @@ async def setup_bot_commands(bot: Bot):
             ),
             BotCommand(command="/links", description="Get all user's links to share"),
             BotCommand(command="/revoke_link", description="Revoke link by ID"),
+            BotCommand(
+                command="/alerts",
+                description="Disable/enable on/off alerts of smart devices, passes 'enable' or 'disable' as argument",
+            ),
         ]
     )
 

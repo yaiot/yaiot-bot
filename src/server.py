@@ -10,7 +10,11 @@ from sqlmodel import SQLModel, text
 from src.config import settings
 from src.db import get_db_session, session_manager
 from src.models import User
-from src.yandex import YandexClient, YandexOAuthException, get_yandex_client
+from src.yandex import (
+    YandexClient,
+    YandexOAuthException,
+    get_yandex_client,
+)
 
 
 @asynccontextmanager
