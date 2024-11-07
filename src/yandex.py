@@ -119,15 +119,15 @@ class YandexClient:
 
     async def run_scenario(
         self,
-        scenario_id: str,
         access_token: str,
+        scenario_id: str,
     ):
         """
         Run user's scenario in the smart home by ID
         https://yandex.ru/dev/dialogs/smart-home/doc/ru/concepts/platform-scenario
 
-        :param scenario_id: scenario ID
         :param access_token: personal access token of the user.
+        :param scenario_id: scenario ID
         """
 
         response = await self.c.post(
@@ -142,17 +142,20 @@ class YandexClient:
 
     async def get_device_state_info(
         self,
+        access_token: str,
         device_id: str,
     ):
         """
         Get information about the user's device in the smart home by ID
         https://yandex.ru/dev/dialogs/smart-home/doc/ru/concepts/platform-device-state
 
+        :param access_token: personal access token of the user.
         :param device_id: device ID
         """
 
         response = await self.c.get(
             f"https://api.iot.yandex.net/v1.0/devices/{device_id}",
+            headers={"Authorization": f"Bearer {access_token}"},
         )
 
         if response.status_code != 200:

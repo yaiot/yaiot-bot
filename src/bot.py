@@ -1,3 +1,5 @@
+from typing import Generator
+
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandObject, CommandStart
 from aiogram.types import BotCommand, Message
@@ -50,9 +52,13 @@ async def cmd_start_scenario(message: Message, command: CommandObject):
         await message.answer(f"Running scenario {scenario_id}...")
 
         try:
-            await yandex_client.run_scenario(scenario_id, access_token)
+            await yandex_client.run_scenario(access_token, scenario_id)
         except YandexIoTException as e:
             await message.answer(f"Error: {e.message}")
             return
 
         await message.answer(f"Scenario {scenario_id} has completed successfully!")
+
+
+def get_telegram_client() -> Generator[Bot, None, None]:
+    yield bot
